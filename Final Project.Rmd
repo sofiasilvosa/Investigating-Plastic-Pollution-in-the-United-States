@@ -1,0 +1,592 @@
+---
+title: "Investigating Plastic Pollution in the United States versus China Based on Cleanups from the Years 2019 and 2020"
+author: "Group 4-5: Jacqueline Reed, Nasia Meimeteas, Chloe Brenner, Sofia Silvosa"
+date: "April 20, 2022"
+output: 
+  pdf_document:
+    fig_height: 3
+    fig_width: 6
+---
+
+# Load Packages
+
+```{r load-packages, message = FALSE, warning = FALSE, echo=FALSE}
+library(tidyverse) 
+library(tidytuesdayR)
+library(tidymodels)
+library(viridis)
+library(knitr)
+library(tidyr)
+``` 
+
+# Load Data
+```{r plastic-pollution, message = FALSE, warning = FALSE, echo=FALSE}
+
+plastic_pollution <- read_csv ("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-01-26/plastics.csv")
+```
+
+# Introduction and Data 
+
+**Background and Significance**
+
+Plastic pollution is one of the biggest,current environmental hazards. Millions 
+of animals are killed by plastic every year; marine animals are specially 
+affected by plastic pollution due to ingesting or getting tangled in these 
+plastic wastes. The vast majority of plastic is also produced through the use of
+fossil fuels, rising gas emissions and advancing the global climate change crisis.
+It is estimated that by 2050, plastic will outweigh the amount of fish in the ocean.
+
+The global plastic pollution crisis has worsened in recent years due to the 
+overproduction of plastic and the growth of new plastic production facilities. 
+Consumer companies utilize plastic to deliver and package their products; these 
+over-reliance and vast production of plastic has exacerbated this crisis. 
+
+Companies that play a big role in the plastic pollution crisis like Coca-Cola 
+and Nestle continue to implement flase solutions to the crisis by implementing 
+faulty recyclable products. Companies are avoiding making real change. Companies 
+should commit to reduce waste and work alongside environmental organizations to 
+help mitigate plastic pollution.
+
+**Data**
+
+Our dataset (13,380 observations) includes information about 
+plastic pollution including the country the plastic was collected in, the type 
+of plastic, and the company that was the source of the plastic. The data also 
+includes information about the plastic cleanup event including the number of 
+events, volunteers and the total number of plastic collected.The data was 
+derived from tidytuesday, & was originally collected in 2019 and 2020 from an 
+audit by the NGO "Break Free from Plastic." The organization helped organize 284 
+cleanups in over 50 countries; through these cleanups, Break Free From Plastic 
+was able to identify the top global polluting companies and identify the most 
+polluted types of plastic.
+
+We plan to use most of the variables in the dataset to explore our research 
+question. Specifically, we will focus on the following variables: country 
+(country of cleanup, filtering only for the US and China), parent_company 
+(source of plastic), grand_total (grand total count for all types of plastic), 
+num_events (number of counting events), the 7 variables for type of plastic 
+(hdpe, ldpe, o, pet, pp, ps, pvc), and year (when the plastic was collected).
+
+
+**Research Questions**
+
+When conducting this analysis, our team sought to understand the overarching 
+question:
+*Does the amount of plastic collected differ greatly between the United States 
+and China, the two largest economies and polluters in the world?* 
+We hypothesize that, given the highly different governmental and social 
+structures in the United States versus China, these counties will differ in the 
+amount of plastic they produce. We think that China will surpass the US in the 
+amount of plastic collected in the recent years, as China is considered the 
+world's top manufacturing hub and the country accounts for 28.7% of total global 
+manufacturing output. 
+
+In order to examine this, we broke our analysis into three parts, each exploring 
+different variables relating to plastic in these two countries. First we looked 
+at the data regarding the average pollution from parent companies, then we 
+examined whether type of plastic differs greatly between the counties, and 
+lastly we sought to determine whether the year (2019 or 2020) made a difference 
+in the amount of plastic collected, given that 2020 is a pandemic year versus a 
+normal collection year in 2019. The three specific research questions we sought 
+to explore are as follows:
+
+This data is presented in terms of the amount of plastic collected from each 
+parent company within each country. Thus, our 
+**first research question is: Is 
+there a significant difference in the waste of the average parent company in 
+China and the US?** 
+We hypothesize that, since there is recently a large legislative push against 
+pollution from businesses in the US, China will have a higher average number of 
+plastic collected by a parent company. 
+
+Secondly, there is a major problem regarding lack of proper recycling and 
+organized collection of plastic and thus we wanted to look more closely at the 
+data in regards to the types of plastic that was polluted. Therefore, our 
+**second research question is: Within the overall reported plastic of the two 
+countries, what is the difference in the types of plastic reported?** 
+We hypothesize that the lowest amounts of plastic found will be 'HDPE' and 'PVC'
+as these are the most commonly recycled plastic whereas the highest will be from 
+the 'other category' as these are less easily recycled.
+
+Lastly, our **third research question is: How does the amount of plastic 
+collected differ from 2019 to 2020?** Given that the Covid-19 pandemic hit in 
+the year 2019, we presume that the amount of plastic collected in this year as 
+compared to 2020 will be significantly lower. 
+
+
+#Methodology
+
+**Exploratory Data Analysis**
+
+```{r USChina-data, echo = FALSE, message = FALSE, warning = FALSE}
+plastic_pollution1 <- plastic_pollution %>%
+  filter(country == "United States of America") 
+plastic_pollution2 <- plastic_pollution %>%
+  filter(country == "China")
+china_us_pollution <- full_join(plastic_pollution1, plastic_pollution2) %>%
+  drop_na(grand_total) %>% 
+  mutate(Country_binary = ifelse(country == "China", 0, 1))
+```
+
+Below is a visualization of the grand total pollution in the US and China:
+
+```{r total-pollution, message = FALSE, warning = FALSE, echo=FALSE}
+china_us_pollution %>%
+  group_by(country) %>%
+  filter(parent_company != "Grand Total") %>%
+  ggplot(mapping = aes(x = country, y = grand_total)) + 
+  geom_col() + 
+  labs(title = "Grand Total Pollution in the United States and China", 
+       x = "Country", y = "Grand Total Pollution")
+```
+
+Below is a visualization of the average amount of plastic collected per parent 
+company in the US and China:
+
+```{r average-plastic-per-company, message = FALSE, warning = FALSE, echo=FALSE}
+china_us_pollution %>% 
+  group_by(country) %>% 
+  filter(parent_company != "Grand Total") %>%
+  filter(parent_company != "Unbranded") %>%
+  filter(parent_company != "null") %>% 
+  summarize(avgplasticpercompany = mean(grand_total)) %>% 
+  ggplot(mapping = aes(x = country, y = avgplasticpercompany)) + 
+  geom_col() + 
+  labs(title = "Average Company Pollution in the United States and China", 
+       x = "Country", y = "Average Company Pollution")
+```
+
+Below are three visualizations to determine the leading parent companies in each 
+country as well as the top 10 parent companies globally:
+
+```{r top-10-parent-companies-in-US, message = FALSE, warning = FALSE, echo=FALSE}
+china_us_pollution %>%
+  filter(country=="United States of America") %>% 
+  filter(parent_company != "Grand Total") %>% 
+  filter(parent_company != "Unbranded") %>% 
+   filter(parent_company != "null") %>% 
+  arrange(desc(grand_total))  %>% 
+  slice(1:10) %>% 
+ggplot(mapping= aes(x= parent_company, y= grand_total)) +
+  geom_col(fill='blue') + 
+  coord_flip() + 
+  labs(title = "Grand Total Pollution by Top 10 
+       U.S Plastic Polluter Companies",
+       x = "Parent Companies", y = "Grand Total Pollution")
+```
+
+```{r top-10-parent-companies-in-China, message = FALSE, warning = FALSE, echo=FALSE}
+  plastic_pollution2 %>% 
+  filter(parent_company != "Grand Total") %>% 
+  filter(parent_company != "Unbranded") %>% 
+   filter(parent_company != "null") %>% 
+  arrange(desc(grand_total))  %>% 
+  slice(1:10) %>% 
+ggplot(mapping= aes(x= parent_company, y= grand_total)) +
+  geom_col(fill='red') + 
+  coord_flip() + 
+  labs(title = "Grand Total Pollution by Top 10 
+  China Plastic Polluter Companies",
+       x = "Parent Companies", y = "Grand Total Pollution")
+```
+
+According to the Brand Audit report from 2019 organized by the
+Break Free from Plastic movement, the top 10 global polluter companies were
+Coca-Cola, Nestle, Pepsico, Mondelez International, Unilever, Mars, 
+Proctor and Gamble, Colgate-Palmolive, Philip Morris International, and 
+Perfetti. The 2020 grand total plastic amount from nine for the the U.S 
+and China are found in the visual below.
+
+```{r top-10-global-polluters, message = FALSE, warning = FALSE, echo=FALSE}
+china_us_pollution %>%
+  filter(parent_company != "Grand Total") %>% 
+  filter(parent_company != "Unbranded") %>% 
+   filter(parent_company != "null") %>% 
+   filter(year == "2020") %>% 
+   filter(parent_company == 'The Coca-Cola Company' | 
+            parent_company == 'Procter & Gamble' | 
+            parent_company == 'Pepsico'| 
+            parent_company == 'Unilever' | 
+            parent_company == 'Colgate-Palmolive'|  
+            parent_company == 'Mondelez International' |  
+            parent_company == 'Nestle' | 
+            parent_company ==  'Perfetti Van Melle' | 
+            parent_company ==  'Mars, Incorporated' |  
+            parent_company ==  'Philip Morris International') %>% 
+  ggplot(mapping=aes(x=parent_company, y= grand_total, fill=country )) +
+  coord_flip() + 
+  scale_fill_viridis(discrete= TRUE, option= 'E') +
+   geom_col() +
+   labs(title = "Grand Total Pollution of Top 10 
+    Global Polluters",
+       y = "Parent Companies", x = "Grand Total Pollution")
+```
+
+**RESEARCH QUESTION 1**
+
+First, a hypothesis test was done to check the difference in means of these two 
+countries for the average amount of plastic per country.
+
+Null Hypothesis:
+The average amount of plastic collected per company in China is equal to the 
+mean plastic collected per parent company in the United States.
+$H_0: \mu_{china} = \mu_{US}$
+
+Alternative Hypothesis:
+The average amount of plastic collected per parent company in China and the 
+United States is not equal. 
+$H_1: \mu_{china} \neq \mu_{US}$
+
+```{r research-question-1, message = FALSE, warning = FALSE, echo=FALSE}
+null_dist <- china_us_pollution %>%
+  filter(parent_company != "Grand Total") %>%
+  filter(parent_company != "Unbranded") %>%
+  filter(parent_company != "null") %>% 
+  specify(response = grand_total, explanatory = country) %>%
+  hypothesize(null = "independence") %>%
+  generate(10000, type = "permute") %>%
+  calculate(stat = "diff in means")
+china_us_pollution %>% 
+  group_by(country) %>% 
+  filter(parent_company != "Grand Total") %>%
+  filter(parent_company != "Unbranded") %>%
+  filter(parent_company != "null") %>%
+  summarize(diff_means = mean(grand_total)) %>% 
+  kable()
+visualize(null_dist) +
+  shade_p_value(obs_stat = 1.01, direction = "two-sided")
+get_p_value(null_dist, 1.01, "two-sided") %>% 
+  kable()
+
+
+```
+
+
+```{r linear-regression-for-country, message = FALSE, warning = FALSE, echo=FALSE}
+china_us_pollution <- china_us_pollution %>% 
+filter(parent_company != "Grand Total") %>% 
+mutate(dummy_country=if_else(country=='United States of America', 0,1))
+m_main <- linear_reg() %>%
+  set_engine("lm") %>%
+  fit(grand_total ~  dummy_country , data = china_us_pollution )
+ 
+m_main %>%
+  tidy() %>% 
+  kable
+  glance(m_main)$r.squared %>% 
+    kable
+
+```
+
+
+
+$$ \widehat{Grand Total} = 19.17 + 12.25~country $$ 
+
+
+**RESEARCH QUESTION 2**
+
+```{r rq-2-pivotlonger, message = FALSE, warning = FALSE, echo=FALSE}
+longer_data <- china_us_pollution %>%
+  filter(parent_company != "Grand Total") %>%  #added
+  drop_na(hdpe, ldpe, o, pet, pp, ps, pvc) %>% 
+  pivot_longer(hdpe:pvc, names_to = "type", values_to = "count_type") %>%
+  select(country, type, count_type) %>% 
+  group_by(country, type) %>% 
+  summarize(type_number = sum(count_type)) %>%
+  kable 
+longer_data
+```
+
+
+```{r ggplot-research-q2, message = FALSE, warning = FALSE, echo=FALSE}
+  ggplot(data = longer_data, aes(x= type, y= type_number, fill = country)) +
+  geom_col()+
+  labs( title = "Type of Plastic by Country", x = "Type of Plastic", y="Amount",
+        fill= "Country")
+```
+
+```{r research-question-2-t-test, message = FALSE, warning = FALSE, echo=FALSE}
+china_us_pollution%>%
+  filter(country == "United States of America") %>%
+  t_test(o ~ pp) %>%
+  kable 
+    
+  china_us_pollution %>%
+    filter(country == "China")%>%
+    t_test(o ~ pet)%>%
+    kable
+  
+```
+
+**RESEARCH QUESTION 3**
+```{r research-question-3, message = FALSE, warning = FALSE, echo=FALSE}
+china_us_pollution %>% 
+  group_by(country, year) %>%
+  filter(parent_company != "Grand Total") %>% 
+  mutate(year_categorical = ifelse(year == 2019, "2019","2020")) %>%
+  mutate(grand_totalsum = sum(grand_total)) %>% 
+  ggplot(mapping = aes(x = year_categorical, fill = country)) + 
+  geom_bar() + 
+  labs(title = "Total Company Pollution in the United States and China in 2019", 
+       x = "Year", y = "Total Pollution") 
+
+```
+
+```{r rq-3-regression, message = FALSE, warning = FALSE, echo=FALSE}
+china_us_pollution <- china_us_pollution %>% 
+  filter(parent_company != "Grand Total") %>% 
+  mutate(dummy_year= if_else(year==2019, 0,1)) 
+year_model <- linear_reg() %>%
+  set_engine("lm") %>%
+  fit(grand_total ~ dummy_year, data = china_us_pollution)
+year_model %>%
+  tidy() %>% 
+  kable
+  glance(year_model)$r.squared %>% 
+  kable  
+  
+```
+
+
+
+$$ \widehat{Grand Total} = 6.46 + 21.26~age $$ 
+
+
+```{r multiple-regression, message = FALSE, warning = FALSE, echo=FALSE}
+options(scipen = 999)
+china_us_pollution <- china_us_pollution %>% 
+   filter(parent_company != "Grand Total") %>% 
+  mutate(dummy_year= if_else(year==2019, 0,1)) 
+year_model2 <- linear_reg() %>%
+  set_engine("lm") %>%
+  fit(grand_total ~ dummy_year + num_events + volunteers, 
+      data = china_us_pollution)
+year_model2 %>%
+  tidy() %>% 
+  kable
+  glance(year_model2)$r.squared %>% 
+  kable
+```
+
+$$ \widehat{Grand Total} = 3.96 +15.25~year +0.15~events -0.004~volunteers $$ 
+
+
+
+# Results
+
+**Research question 1:** 
+The observed statistic was a difference in means of 1.01. 
+The p-value that was obtained is 0.4122 This value is well over 0.05. This means 
+that we fail to reject the null hypothesis. In the context of this situation, we 
+cannot reject the that the difference between the average 
+amount of plastic collected per company for China and the US is the same. 
+
+We also used a linear regression model to explore whether country is a 
+significant predictor of grand plastic total in order to further investigate 
+whether there is a significant difference between the plastic pollution found 
+in China compared to the United States of America. The intercept in our 
+regression model is 19.17, meaning that if there was 
+no 'country', we would expect the grand plastic total to be 19.17 units. 
+In this context of this model, this intercept value is not applicable.
+If the grand total plastic count was collected in China, we would expect it 
+the plastic count to be 12.25 units less than in the United States. 
+0.12% percent of the variance in grand plastic total amount is explained by 
+country.
+
+However, our explanatory variable of 'country' is not significant at the 
+$a$ = 0.05 level, meaning that this predictor variable is not statistically
+significant. Thus, we do not have enough evidence to support the claim 
+that the country in which the plastic pollution was collected predicts
+total grand total plastic amount.
+
+**Research question 2:**
+Based on the visualization created, it is clear that the most prevalent type of 
+plastic categorized in collection was the type “o”, which stood for other in the
+dataset. This is any type of plastic gathered that did not fall under the other 
+categories given. Almost all values are zero besides the “o” category and a 
+small number of plastics collected in the “pet” category, which is polyester.
+
+Polyester has the highest value for China (not counting the
+other category), it does not have the highest value for the US. In the US, the 
+most prevalent type of plastic was “pp”, or Polypropylene. Closely under the 
+amount of polypropylene collected in the US was the amount of polyester. The 
+rest of the plastic types were found with much lower frequency than these two 
+types were.  Low density polyethylene and Polystyrene were collected in similar 
+amounts. Right beneath these two types of plastic was high density polyethylene. 
+Last, the least prevalent type was PVC.
+
+Despite the differing bar distributions, neither the difference between the 
+number of "pp" and "other" collected in the US and "other" and "pet" collected
+China are significant different at $\alpha=0.05$ level (p=0.165, p= 0.565). 
+
+
+
+**Research question 3:**
+
+Based on our visual, we can conclude that that in 2019 there was a greater 
+amount of plastic grand total count for both China and the United States. 
+
+
+According to our linear regression model, if the year was 2020, 
+we would expect the grand total amount 
+to be 21.26 units higher than if it was 2019.  0.32% of the variance
+in grand plastic total count is explained by the
+year the plastic total was collected.
+
+The year predictor was significant at the $\alpha$ = 0.05 level (p=0.017),so 
+based on this linear regression model the relationship between
+year and grand total plastic count is statistically significant. However, in
+order to ensure that we are avoiding a Type 1 error, we decided to also
+run a multiple regression model controlling for number of volunteering
+events and volunteer count to investigate whether year still plays a significant
+predictor role.
+
+According to our multiple regression model, for every increase in
+volunteering events the plastic grand total count 
+increases by 0.15, all else held constant. For every increase in volunteers
+the plastic grand total count decreases by 0.004, all else held constant. 
+Finally, for our year variable we can interpret our main effect as if the year
+was 2020, we would expect the grand total amount to be 15.25 units higher than 
+if it was 2019.
+
+As none of the predictors were below the $\alpha$ = 0.05 level, we do 
+not have evidence to demonstrate these these variables predict our
+explanatory variable of total plastic grand total. 0.49% of the variance 
+in grand plastic total count is explained by year, volunteers,
+and volunteering events.
+
+
+# Discussion 
+
+**Conclusions:**
+
+RQ3: According to our methodology, the difference in 
+grand total plastic waste from the average parent company in China and 
+the US is not significantly different. The evidence for this conclusion 
+is the hypothesis test investigating the difference in mean grand total waste
+is not significant at the $\alpha=0.05$ level. This conclusion contradicts
+our original hypothesis that Chinese parent companies would emit
+greater levels of pollution due to US legislation focused on limiting 
+plastic waste. However, the validity of this 
+data may be called into question due to the unequal number of 
+collection events.
+
+RQ2: It is reasonable that "o" is the highest ranking column 
+in the visualization for both the US and China 
+(as visible when looking at the proportions reflected in 
+the chart) since it likely encompasses a lot of different plastic types that 
+were not identified by volunteers. When considering the plastic collected that 
+actually fit one of the coded types, it is clear that there is very little data 
+for China present. By contrast polyester was the most frequently
+collected category for China, which is not surprising given the context 
+that there is an established polyester surplus in China (https://www.fibre2fashion.com/industry-article/7406/surplus-polyester-
+production-in-china). However, we conclude that the differences
+between the number of items collected between the top two plastic types
+for each country are not significant. Therefore, rather our results
+do not suggest that targeting a specific type of plastic in regulations
+will be more effective in reducing overall pollution. 
+
+
+RQ3: Based on the visualization from research question 3, more plastic was
+collected in both nations in 2019 compared to 2020. 
+Perhaps, this is a result of a decrease in plastic pollution in 2020. However, 
+this is likely not the case as shown with recent trends of plastic pollution as 
+outlined by the Breaking Free from Plastic report. This difference in 2019 to 
+2020 plastic count is more likely a result of the decrease of volunteering clean 
+up events because of the rise of the COVID-19 pandemic.
+
+In addition, the linear regression model to investigate whether 
+year predicts grand total plastic indicated that it is significantly 
+correlated as evidenced by the 0.017 p value. However, due to an observed
+difference in the number of collection events  and volunteers
+between the two countries during initial exploratory data analysis, we ran a 
+multiple regression to control for these differences. The regression 
+demonstrated that when number of events and volunteers were controlled, 
+year was not significant at the alpha level (p= 0.204). Furthermore,
+neither the number of events or volunteers were significant
+all else held constant. So, in the context of the data, we fail to reject the 
+null hypothesis that any of these three predictors significantly affects
+grand total of plastic found. The difference between
+from the linear and multiple regressions shows that grand total is not
+correlated with year despite that collection in 15.25 units higher year
+over year. 
+
+This regression result is surprising because 2020 was a pandemic year. 
+This has two implications: firstly that single use plastics increased 
+in the pandemic as online consumption increased. Secondly, that 
+less data was likely able to be collected in 2020 maybe because access
+to certain areas and social gatherings was limited. As such, we 
+hypothesized that year would be significant predictor for grand total, but
+it was not. Despite that number of events and volunteers were controlled, 
+it is reasonable to assume that the reality of the increase in plastic s
+should have increased the grand total significantly. 
+
+We used these three research questions to investigate our
+overarching question about the  the plastic pollution
+of the US and China. Our first question addressed
+the differences in grand total for a parent company in each
+country while the latter two explored the differences between plastic type
+and year. We found that the average parent company did not produce 
+significantly different amounts of pollution and that the differences
+between years and plastic types were negligible. As such, there
+is still much to be investigated about this topic as plastic pollution
+increasingly harms human, ocean, and ecosystem health. 
+
+**Limitations:**
+There were a few significant limitations to our data analysis. 
+The first was the difference in the number of collection events both 
+between China and the US and 2019 and 2020. These differences are reasonable
+as 2020 was a pandemic year, and with China's stringent regulations, 
+holding frequent plastic collections where a large group would have to 
+gather was not feasible. Furthermore, the organization Break-Free from Plastic,
+where the data comes from, has 111 core collection partners in the United
+States whereas they only have 1 core collection partner in China. Therefore,
+there are bound to be more US collection data points. Given these
+realities, the findings related to higher plastic pollution in the US 
+may be artificially inflated. 
+
+Another key limitation was that the data itself was grouped by parent company, 
+and for the majority, the parent companies in the US differ from those 
+in China. As such, we focused on the differences between the average
+parent company in China vs the US instead of another more general variable
+such as difference in total plastic per province/state or collected
+per month. 
+
+**Further Research:**
+
+In future analysis, we could base our analysis on 
+background research about plastic in the China and the US. For example, 
+what plastics have been most commonly found in each country
+or which plastic types are most harmful. Using statistics to further research
+existing conclusions is important. Doing more background research
+for the current project as well would have been helpful to organize
+our hypotheses, methodology, and findings. I
+
+As the original plastic_pollution data set is very extensive with 13,380
+observations, in the future it would be fascinating to analyze the
+differences to the same research questions we asked (about parent
+companies, plastic types, and year-over-year differences) but for all or more
+of the countries in the data set. We had difficulty working with this much
+data, and we encountered impassable difficulties in grouping by country
+so decided to do a simplified comparison of China and the US, the world's 
+greatest polluters. But, future research should focus on countries or
+at least regions more broadly. 
+
+
+References
+
+- https://www.breakfreefromplastic.org/2019/10/23/brand-audit-report-2019-press-
+release/
+
+- https://globalupside.com/top-10-manufacturing-countries-in-the-world/#:~:text=
+China%20makes%20up%2028.7%25%20of,China%20claimed%20the%20top%20position 
+
+- https://www.nationalgeographic.com/environment/article/plastic-pollution
+
+- https://www.breakfreefromplastic.org/globalbrandauditreport2019/
+
+- https://www.biologicaldiversity.org/campaigns/ocean_plastics/#:~:text=Plastics
+%20pollution%20has%20a%20direct,or%20getting%20entangled%20in%20it.
+
+https://scc.ms.unimelb.edu.au/resources-list/simple-r-scripts-for-analysis/r-scr
+ipts

@@ -1,0 +1,460 @@
+---
+title: "Project Proposal"
+subtitle: "due February 25, 2022 by 11:59 PM"
+author: "Group 4-5: Jacqueline Reed, Nasia Meimeteas, Chloe Brenner, Sofia Silvosa"
+date: "2/21/2022"
+output: pdf_document
+---
+
+# Load Packages
+
+```{r load-packages, message = FALSE, warning = FALSE}
+library(tidyverse) 
+library(tidytuesdayR)
+library(tidymodels)
+``` 
+
+# Load Data
+```{r plastic-pollution, message = F}
+
+plastic_pollution <- read_csv ("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-01-26/plastics.csv")
+```
+
+```{r biopic-movies, message = F}
+
+ biopic_movies <- read_csv ("https://raw.githubusercontent.com/fivethirtyeight/data/master/biopics/biopics.csv")
+
+```
+
+
+```{r 2020-election, message = F}
+
+ election_data <- read_csv ("https://raw.githubusercontent.com/fivethirtyeight/election-results/main/election_results_presidential.csv")
+
+```
+*Note the data links surpass the 80-character limit due to their length. They 
+were not working when we tried to split them into two lines to fit characters.
+
+# Introduction and Data
+
+plastic_pollution: Dataset (13,380 observations) includes information about 
+plastic pollution including the country the plastic was collected in, the type 
+of plastic, and the company that was the source of the plastic. Data derived 
+from tidytuesday, & was originally collected in 2019 and 2020 from an audit by 
+the NGO "Break Free from Plastic" (conducts plastic audits via ocean clean ups. 
+
+biopic_movies: Dataset comes from FiveThirtyEight, and was collected in 2015 and
+published in the article 'Straight Outta Compton' Is The Rare Biopic Not About 
+White Dudes" on August 14th. This dataset looks at 761 biopic films from 1915-
+2014. Most of the movie information was collected from imdm.com. The dataset 
+primarily explores the year release, box office revenue, type of subject, race,
+number of POC characters, sex of lead and lead actor of each film.
+
+election_data: These data set contains up-to-date results of elections for 
+Governor, U.S. Senate, and President, both nationally and by state, from the
+November 1998 general election to the present. It comes from FiveThirtyEight and
+was compiled in 2020. Key variables include year, state, office, candidate name,
+party, and votes. Data was recorded for 7,175 elections. 
+
+# Research Questions
+
+Please discuss your research questions here.
+
+plastic_pollution: We want to analyze the connection between country, type of 
+plastic and grand_total, and the company that manufactured the plastic samples. 
+Through our project we will seek to answer three key questions: 
+1. How do the countries compare in terms of total plastic pollution?
+2. How did plastic type collected vary by country and which plastic
+type was found most frequently in each country? 
+3. How did the parent companies compare in terms of total plastic and type of
+plastic collected?
+We hypothesize that there will likely be higher amounts of plastic pollution
+in developing nations because there are poorer waste management systems. 
+We also predict that "hdpe" (plastic bags) and "pet" (soft drinks/containers) 
+will have the greatest incidence. Finally, we hypothesize that the most waste 
+will be from Nestlé & Coca-Cola (the highest grossing food/bev companies).
+
+biopic_movies: Using this dataset, we will be exploring the diversity of
+lead characters in recent biopic films from the last century. Secondly, we will 
+see if there is a significant difference between the number of POC and white 
+lead characters portrayed. We also want to investigate whether there is a 
+significant difference between the number of female and male lead characters 
+portrayed. Lastly we want to explore if these trends have evolved in 21st 
+century compared to the 20th century? We hypothesize that there will be a 
+significantly larger amount of white lead charters and that more male leads 
+have been portrayed than female leads. Lastly, we hypothesize that in the 21st
+century, there has been an increase of diverse biopic leads.
+
+election_data: We want to focus our research of this rich dataset to the party, 
+office, year, and votes. We want to research two primary questions: 
+1. How has the party of winning candidates changed in swing states across the 
+years surveyed? We will determine swing states by analyzing which states vary 
+most in party of winning candidates. 2. What is the relationship between the 
+type of office and party of the candidate, for swing states to understand 
+whether certain offices tend to favor a party. We hypothesize that in swing 
+states Democratic candidates will have won more frequently in recent years, with
+the trend moving away from Republicans across the years surveyed. We predict 
+that US House positions in swing states will favor Republican candidates as 
+each district gets a seat even if their population is less dense. 
+
+# Glimpse
+
+Please use `glimpse` for your datasets here.
+```{r dataset 1 }
+glimpse(biopic_movies)
+```
+
+```{r dataset 2 }
+glimpse(election_data)
+```
+
+```{r dataset 3 }
+glimpse(plastic_pollution)
+```
+Written Report
+
+Background and Significance: 
+
+Plastic pollution is one of the biggest,current envrionmental hazards.  Millions of animals are killed by plastic every year; marine animals are specially affected by plastic pollution due to ingestsing or getting tangled in these plastic wastes. The vast majority of plastic is also produced through the use of fossil fuels, rising gas emissions and advancing the global climate change crisis.
+It is estimated that by 2050, plastic will outweigh the amount of fish in the ocean.
+
+The global plastic pollution crisis has worsened in recent years due to the overproduction of plastic and the growth of new plastic production facilities. Consumer companies utilize plastic to deliver and package their products; these overeliance and vast production of plastic has exacerbrated this crisis. 
+
+Companies that play a big role in the plastic pollution crisis like Coca-Cola and Nestle continue to implement flase solutions to the crisis by implementing faulty recyable products. Companies are avoiding making real change. Companies should commit to reduce waste and work alongside envrionmental organizations to help mitigate plastic pollution.
+
+Data:
+
+Our dataset (13,380 observations) includes information about 
+plastic pollution including the country the plastic was collected in, the type of plastic, and the company that was the source of the plastic. The data also includes information about the plastic cleanup event including the number of events, volunteers and the total number of plastic collected.The data was derived from tidytuesday, & was originally collected in 2019 and 2020 from an audit by the NGO "Break Free from Plastic." The organization helped organize 284 cleanups in over 50 countries; through these cleanups, Break Free From Plastic was able to identify the top global polluting companies and identify the most polluted types of plastic.
+
+We plan to use the variables country (country of cleanup), parent_company ( source of plastic), grand_total (grand total count: all types of plastic) and num_events (number of counting events).
+
+
+Research Questions: 
+
+The overarching question we seek to explore is:
+Does the amount of plastic collected differ greatly between the United States and China, the two largest economies and polluters in the world? 
+
+#also mention population difference
+
+
+We hypothesize that there will likely be a similarity in the amount of plastic 
+collected in these two countries, and that they will be quite high given 
+the size and population of these countries. Finally, we also think 
+that the most waste will likely come from companies such as Nestlé & Coca-Cola 
+since they are the some of the highest grossing food/beverage companies.
+
+Methodology & Results:
+
+First, we created a dataset with the plastic information for the United States.
+
+```{r unitedstates-data}
+plastic_pollution1 <- plastic_pollution %>%
+  filter(country == "United States of America") 
+
+plastic_pollution1
+```
+Secondly, we created a dataset with the plastic pollution data for China.
+
+```{r china-dataset}
+plastic_pollution2 <- plastic_pollution %>%
+  filter(country == "China")
+
+plastic_pollution2
+```
+We then joined the two datasets for our analysis and added a variable to give
+each respective country a binary value:
+
+```{r join-china-us, message = FALSE}
+china_us_pollution <- full_join(plastic_pollution1, plastic_pollution2) %>%
+  drop_na(grand_total) %>% 
+  mutate(Country_binary = ifelse(country == "China", 0, 1))
+
+```
+
+Our first point of analysis was to create a plot in order to determine and 
+visualize the grand total pollution in the US and China so that we could see if 
+there was a great different in the numbers.
+
+```{r total-pollution}
+china_us_pollution %>%
+  group_by(country) %>%
+  filter(parent_company != "Grand Total") %>%
+  ggplot(mapping = aes(x = country, y = grand_total)) + 
+  geom_col() + 
+  labs(title = "Grand Total Pollution in the United States and China", 
+       x = "Country", y = "Grand Total Pollution")
+```
+Based on this bar plot, it can be seen that, against our original hypothesis, 
+the grand total pollution in these two countries differs greatly. The US has a 
+significantly higher amount of pollution that was collected. (talk about the 
+external factor of # of collections). 
+
+To understand the data trends of plastic per country, we found the average 
+amount of plastic collected per parent company in the US and China.
+```{r average plastic per company}
+china_us_pollution %>% 
+  group_by(country) %>% 
+  filter(parent_company != "Grand Total") %>%
+  filter(parent_company != "Unbranded") %>%
+  filter(parent_company != "null") %>% 
+  summarize(avgplasticpercompany = mean(grand_total)) %>% 
+
+  ggplot(mapping = aes(x = country, y = avgplasticpercompany)) + 
+  geom_col() + 
+  labs(title = "Average Company Pollution in the United States and China", 
+       x = "Country", y = "Average Company Pollution")
+```
+
+This data reflected that the average company in china created more plastic waste
+than the average company in the US.
+
+To further analyze this, we ran a hypothesis test checking the difference in 
+means of these two countries for the average amount of plastic per country. 
+
+Null:
+The average amount of plastic collected per company in China and the US is 
+the same
+$H_0: \mu_{china} - \mu_{US}  = 0$
+
+
+Alternative:
+The average amount of plastic collected per company in China and the US is 
+different
+$H_1: \mu_{china} - \mu_{US} \neq 0$
+
+```{r hypothesis test difference in means}
+null_dist <- china_us_pollution %>%
+  filter(parent_company != "Grand Total") %>%
+  filter(parent_company != "Unbranded") %>%
+  filter(parent_company != "null") %>% 
+  specify(response = grand_total, explanatory = country) %>%
+  hypothesize(null = "independence") %>%
+  generate(10000, type = "permute") %>%
+  calculate(stat = "diff in means")
+
+china_us_pollution %>% 
+  group_by(country) %>% 
+  filter(parent_company != "Grand Total") %>%
+  filter(parent_company != "Unbranded") %>%
+  filter(parent_company != "null") %>%
+  summarize(diff_means = mean(grand_total))
+
+visualize(null_dist) +
+  shade_p_value(obs_stat = 1.01, direction = "two-sided")
+
+get_p_value(null_dist, 1.01, "two-sided")
+```
+The observed statistic was a difference in medians of 1.01. The p-value that was 
+obtained is 0.4122 This value is well over 0.05. This means that we fail to 
+reject the null hypothesis. In the context of this situation, we cannot reject 
+that the difference between the average amount of plastic collected per company 
+for China and the US is not the same.
+
+```{r top-10-parent-companies-in-U.S}
+
+
+china_us_pollution %>%
+  filter(country=="United States of America") %>% 
+  filter(parent_company != "Grand Total") %>% 
+  filter(parent_company != "Unbranded") %>% 
+   filter(parent_company != "null") %>% 
+  arrange(desc(grand_total))  %>% 
+  slice(1:10) %>% 
+ggplot(mapping= aes(x= parent_company, y= grand_total)) +
+  geom_col(fill='blue') + 
+  coord_flip() + 
+  labs(title = "Grand Total Pollution by Top 10 U.S Plastic Polluter Companies",
+       x = "Parent Companies", y = "Grand Total Pollution")
+  
+
+```
+Top 10 companies in the United State with highest grand total waste.
+
+```{r top-10-parent-companies-in-China}
+  plastic_pollution2 %>% 
+  filter(parent_company != "Grand Total") %>% 
+  filter(parent_company != "Unbranded") %>% 
+   filter(parent_company != "null") %>% 
+  arrange(desc(grand_total))  %>% 
+  slice(1:10) %>% 
+ggplot(mapping= aes(x= parent_company, y= grand_total)) +
+  geom_col(fill='red') + 
+  coord_flip() + 
+  labs(title = "Grand Total Pollution by Top 10 China Plastic Polluter Companies",
+       x = "Parent Companies", y = "Grand Total Pollution")
+
+
+
+
+```
+According to the Brand Audit report from 2019 organized by the
+Break Free from Plastic movement, the top 10 global polluter companies were
+Coca-Cola, Nestle, Pepsico, Mondelez International, Unilever, Mars, 
+Proctor and Gamble, Colgate-Palmolive, Philip Morris International, and 
+Perfetti. The 2020 grand total plastic amount from nine for the the U.S 
+and China are found in the visual below.
+
+
+
+
+
+```{r}
+china_us_pollution %>%
+  filter(parent_company != "Grand Total") %>% 
+  filter(parent_company != "Unbranded") %>% 
+   filter(parent_company != "null") %>% 
+   filter(year == "2020") %>% 
+   filter(parent_company == 'The Coca-Cola Company' | parent_company == 'Procter & Gamble' | parent_company == 'Pepsico'| parent_company == 'Unilever' | parent_company == 'Colgate-Palmolive'|  parent_company == 'Mondelez International' |  parent_company == 'Nestle' | parent_company ==  'Perfetti Van Melle' | parent_company ==  'Mars, Incorporated' |  parent_company ==  'Philip Morris International') %>% 
+
+  ggplot(mapping=aes(x=parent_company, y= grand_total, fill=country )) +
+  coord_flip() + 
+   geom_col()
+
+
+```
+
+
+
+Cola cola both in united states and china
+maybe do t-test to compare if there is a signifincat difference?
+
+
+
+
+
+
+
+Next, we decided to do a hypothesis test regarding the mean grand total plastic.
+These values represent the average plastic found among each parent company for 
+the two countries. (The mean grand total plastic in the US for all the parent 
+companies versus the mean grand total plastic in China for all the parent 
+companies).
+
+Our null and alternative hypothesis are as follows:
+$H_0: \mu_W = \mu_L$ and
+$H_1: \mu_W \neq \mu_L$
+
+```{r mean-grandtotal}
+china_us_pollution %>%
+  group_by(country)%>%
+  summarize(mean_grandtotal = mean(grand_total))
+```
+
+
+```{r ttest}
+china_us_pollution %>%
+  group_by(country)%>%
+  t_test(response = grand_total,
+         alternative = "two-sided", 
+         conf_int = TRUE)
+
+china_us_pollution %>% 
+  filter(parent_company != "Grand Total") %>% 
+  group_by(Country_binary) %>% 
+  select(country, grand_total) %>% 
+  t_test(grand_total ~ country)
+
+# review t-test
+```
+This t-test demonstrates that the grand totals of the China and US 
+pollution data are not significantly different (p = 0.1206136). 
+
+
+
+```{r linear-regression}
+
+  clean_china_us_pollution <- china_us_pollution %>% 
+  filter(parent_company != "Grand Total") %>% 
+  filter(parent_company != "Unbranded") %>% 
+  filter(parent_company != "null")  %>% 
+  mutate(biggest_pol= hdpe + pet) 
+
+
+m_main <- linear_reg() %>%
+  set_engine("lm") %>%
+  fit(grand_total ~  country, data = clean_china_us_pollution )
+
+m_main %>%
+  tidy()
+ 
+
+```
+
+
+According to "Break Free From Plastic", the top 3 most common plastic items found were plastic bottles, sachets and plastic bottles. These items are included in two types of plastic categories: hdpe and pet. We want to know whether the amount of combined hdpe and pet can predict a 
+
+```{r does-hdpe-andpet-predict-total-grand-total}
+
+china_us_pollution %>% 
+  filter(parent_company != "Grand Total") %>% 
+  filter(parent_company != "Unbranded") %>% 
+  filter(parent_company != "null") %>% 
+  mutate(biggest_pol= hdpe + pet) %>% 
+  ggplot(mapping=aes(x= biggest_pol, y= grand_total)) +
+  geom_point() +
+  geom_smooth(method='lm')
+
+
+```
+
+
+
+
+```{r multiple-regression}
+
+  clean_china_us_pollution <- china_us_pollution %>% 
+  filter(parent_company != "Grand Total") %>% 
+  filter(parent_company != "Unbranded") %>% 
+  filter(parent_company != "null")  %>% 
+  mutate(biggest_pol= hdpe + pet) 
+
+
+m_main <- linear_reg() %>%
+  set_engine("lm") %>%
+  fit(grand_total ~ num_events + biggest_pol+ country, data = clean_china_us_pollution )
+
+m_main %>%
+  tidy()
+ 
+
+```
+
+intercept: The grandtotal is 3.5 if there are no clean ups and there is no country. This intercept does not make sense in this context.
+
+slopes: 0.209, 3.817
+
+For every increase in num_events, there is a 0.2096 increase in grand_total.
+Between the United States to China, there is a 3.8177 increase in grand_total.
+
+Dummy variable: 
+0: china
+1: united states
+
+as you go from china to the u.s, there would be an increase of grand total with a slope of 3.8. 
+The intercept is 3.51 ( China): without number of events, thus is the grand total.
+num events: when controlling for country, there is an increase in grand total with a slope ofd 0.2
+
+
+
+
+Discussion:
+
+Through analysis of our data, it was revealed that the US has more plastic pollution than China. The t-test performed offered evidence of this with a p value of 0.006.
+
+The tests performed were a t-test and a multiple regression. We used a t-test since this test allowed us to evaluate whether we could reject the null hypothesis that there is no significant difference in grand total between China and the United States. We also used a multiple regression test in order to see whether when taking into account both variables of country and number of volunteering events if these variables still play a role in grand total plastic waste.
+
+With that being said, it is important to recognize that the number of collections between the two countries is not the same. There were more collections in the US than there were in China, which would yield a higher number for the amount of plastic gathered in the US. To combat this, we should have controlled for this factor to ensure that we were looking exclusively at the amount of plastic collected regardless of the number of collections. This would have allowed us to compare the results of the two countries objectively. 
+
+
+If we started the project from the beginning, we would use proportions rather than the raw numbers in the data set to perform our analysis.
+
+References:
+
+https://www.breakfreefromplastic.org/2019/10/23/brand-audit-report-2019-press-release/
+
+https://www.nationalgeographic.com/environment/article/plastic-pollution
+
+https://www.breakfreefromplastic.org/globalbrandauditreport2019/
+
+https://www.biologicaldiversity.org/campaigns/ocean_plastics/#:~:text=Plastics%20pollution%20has%20a%20direct,or%20getting%20entangled%20in%20it.

@@ -1,0 +1,99 @@
+---
+title: "Peer Review"
+subtitle: "due April 1, 2022 by 9:00 AM"
+author: "Group 4-5: Jacqueline Reed, Nasia Meimeteas, Chloe Brenner, Sofia Silvosa"
+date: "3/31/2022"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Peer Review for Group 6 Project Draft
+
+Introduction & Data Review: 
+
+The research question is “Can someone's race increase the likelihood of a police
+killing?”. However, this is not the same as the research questions in the 
+proposal. It seems like maybe there are other research questions being addressed
+as well that are not explicitly stated, Try to be as explicit as possible from 
+the beginning of the project as to what you will be exploring in the analysis. 
+Secondly, there is no context in the introduction section here. This is a minor 
+fix since we saw that it is mentioned above in the proposal, but it should also
+be added to the introduction below. The variables that are being assessed are 
+also not explicitly discussed. In general, more narrative describing what 
+is being assessed could be valuable. Also, not sure if this is true but our 
+understanding was that we were supposed to answer just one research question. 
+
+Methodology Review: 
+
+The choice of hypothesis testing makes sense as you are able to ask and analyze
+three separate questions. When calculating the confidence interval, you could 
+use more justification as to why it was necessary and what it means. I am also 
+left wondering why you only used it in relation to one research question rather
+than in each of the null hypothesis tests. Secondly, in the first visualization,
+the fill of the graph is slightly confusing as you have stated that your 
+research question is about race, not gender. I think removing the fill would 
+make the results shown in this graph more explicitly related to race, the 
+variable you are examining. In the visualization about possessing a weapon, I am
+again skeptical of what the fill adds here since the point is to visualize 
+whether the person was armed. Lastly, consider changing the scale of the final 
+visualization so the results are made clearer.
+
+Results Review:
+
+In answer 1, it is clear why the visualization might be misleading, but rather 
+than pointing this out, think about changing the methodology here to obtain 
+results that would be more in line with the other research you sight would be
+more helpful. I am unclear about why in results bullet 2, you say your 
+hypothesis testing is not enough to make a statement about race in relation to 
+police killings. As this is your primary topic of study, maybe considering a 
+different test that would be more revealing could be more helpful. You could 
+look at sample size and independence to see if the CLT would apply here. Lastly,
+although your results do seem to respond to your research questions, I think you
+could diversify your methodology to increase your understanding such as doing
+a regression to obtain an r-squared value to convey a different statistic type.
+
+Discussion Review: 
+
+The discussion greatly explains the results of the different research questions
+explored by the project in a detailed manner. Each research question and its 
+result is explained in great detail and is very well organized. Yet, this 
+discussion seems to just go from one research question to the next without 
+explaining the big picture. What are all these questions trying to say? What is 
+the overall investigation of this project and why is it important to study all 
+these different facets? The limitations are also explained in great detail. 
+However, it would be beneficial to expand more on the limitation about the use
+of percentages instead of raw numbers. 
+
+
+General Review and Final Comments: 
+
+In general, some changes to the structure and technical details should be made 
+before submitting the final project. For example, there are a few spelling 
+errors such as the word “someone’s” in the primary research question.
+Additionally, there are many visualizations and code chunks that appear 
+consecutively with no narrative or explanation of why it was done or transitions
+in between parts. This makes it hard to follow and it is somewhat overwhelming. 
+The actual code presented is clear, so therefore I think it should be condensed 
+and emphasized.  
+
+I am interested to know why this group did not run a  linear regression test. 
+I think pertaining to the research questions it would be interesting to see how
+specifically through regression how one specific factor affects police killings.
+Furthermore, through conducting a multiple regression test, it would be 
+interesting to see the role of each predictor variable (age, race and state 
+location) and how these affect police killings. 
+
+Overall, although some changes need to be made, this group did a great job at 
+explaining the possible reasoning behind their results, specifically revealing 
+what their non-significant data results reveal in the context of their main 
+research questions. I also think the group does a great job in explaining why 
+they used a specific statistical test and how they can clearly help answer their
+main research questions. 
+
+
+
+
+
